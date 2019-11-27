@@ -35,12 +35,47 @@ defmodule PhoneFSM do
   end
 
   # Phone client
-  def incoming_call(number), do: send(:toy_phone, {:incoming, number})
-  def call_number(number), do: send(:toy_phone, {:call, number})
-  def off_hook(), do: send(:toy_phone, :off_hook)
-  def on_hook(), do: send(:toy_phone, :on_hook)
-  def other_on_hook(number), do: send(:toy_phone, {:other_on_hook, number})
-  def other_off_hook(number), do: send(:toy_phone, {:other_off_hook, number})
+  def incoming_call(number),
+    do:
+      (
+        send(:toy_phone, {:incoming, number})
+        :ok
+      )
+
+  def call_number(number),
+    do:
+      (
+        send(:toy_phone, {:call, number})
+        :ok
+      )
+
+  def off_hook(),
+    do:
+      (
+        send(:toy_phone, :off_hook)
+        :ok
+      )
+
+  def on_hook(),
+    do:
+      (
+        send(:toy_phone, :on_hook)
+        :ok
+      )
+
+  def other_on_hook(number),
+    do:
+      (
+        send(:toy_phone, {:other_on_hook, number})
+        :ok
+      )
+
+  def other_off_hook(number),
+    do:
+      (
+        send(:toy_phone, {:other_off_hook, number})
+        :ok
+      )
 
   # States
   def idle() do
@@ -150,31 +185,29 @@ defmodule PhoneFSM do
 
   # Ringer
   def start_ringing() do
-    IO.puts("Beginning of ringing")
     send(:ringer, :ring)
   end
 
   def stop_ringing() do
-    IO.puts("End of ringing")
     send(:ringer, :stop_ringing)
   end
 
   def start_tone() do
-    IO.puts("Beginning of tone sounds")
     send(:ringer, :tone)
   end
 
   def stop_tone() do
-    IO.puts("End of tone sounds")
     send(:ringer, :stop_tone)
   end
 
   def ringer() do
     receive do
       :ring ->
+        IO.puts("Beginning of ringing")
         ringer_ring()
 
       :tone ->
+        IO.puts("Beginning of tone sounds")
         ringer_tone()
 
       {:stop, pid} ->
@@ -185,6 +218,7 @@ defmodule PhoneFSM do
   def ringer_ring() do
     receive do
       :stop_ringing ->
+        IO.puts("End of ringing")
         ringer()
     after
       1000 ->
@@ -196,6 +230,7 @@ defmodule PhoneFSM do
   def ringer_tone() do
     receive do
       :stop_tone ->
+        IO.puts("End of tone sounds")
         ringer()
     after
       1000 ->
